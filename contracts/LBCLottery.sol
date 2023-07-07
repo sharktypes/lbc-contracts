@@ -14,9 +14,7 @@ contract LBCLottery is Ownable {
     uint256 public pauseTimestamp;
     uint256 public lotteryCountdown;
 
-    address public tokenAddress;
-
-    IERC20 lbcToken = IERC20(tokenAddress);
+    IERC20 public lbcToken;
 
     mapping(uint256 => address) public matchNumbers;
     mapping(address => uint256[]) private ticketNumbers;
@@ -35,7 +33,7 @@ contract LBCLottery is Ownable {
         ticketPrice = 50000;
         lotteryCountdown = block.timestamp + 30 days;
 
-        tokenAddress = token;
+        lbcToken = IERC20(token);
     }
 
     modifier onlyWhenNotPaused() {
@@ -95,7 +93,7 @@ contract LBCLottery is Ownable {
             revert InvalidTokenAddress(address(0));
         }
 
-        tokenAddress = token;
+        lbcToken = IERC20(token);
     }
 
     function buyTickets(
@@ -105,7 +103,7 @@ contract LBCLottery is Ownable {
             revert MaxBuyLimit(amount);
         }
 
-        uint256 totalTokens = amount * ticketPrice ** 18;
+        uint256 totalTokens = amount * ticketPrice * 10 ** 18;
 
         lbcToken.transferFrom(msg.sender, address(this), totalTokens);
 
