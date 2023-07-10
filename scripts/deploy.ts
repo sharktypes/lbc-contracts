@@ -1,11 +1,14 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const lbc = await ethers.deployContract("LittleBoyCoin");
+  const LittleBoyCoin = await ethers.getContractFactory("LittleBoyCoin");
 
-  const lbcTokenContract = await lbc.waitForDeployment();
+  const lbc = await upgrades.deployProxy(LittleBoyCoin);
 
-  console.log(await lbcTokenContract.name(), await lbcTokenContract.symbol());
+  const res = await lbc.waitForDeployment();
+  const address = await res.getAddress();
+
+  console.log("LittleBoyCoin deployed to:", address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
